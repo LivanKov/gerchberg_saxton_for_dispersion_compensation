@@ -7,6 +7,10 @@
 % Current goal: minimize dependency on external toolboxes
 
 function output = Shaping(input, shape)
+arguments
+    input double
+    shape (1,1) PulseShape
+end
     pulse = [1];
     switch shape 
         case PulseShape.RECT
@@ -24,7 +28,7 @@ function output = Shaping(input, shape)
 end
   
 % rectangle impulse multiplied by factor x
-% requires rectpuls from the signal processing toolbox
+% fallsback to rectpuls from the signal processing toolbox
 function pulse = GenerateRect(x)
     fprintf("Generating Rectangle");
     pulse = [1];

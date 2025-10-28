@@ -3,9 +3,9 @@
 % No external dependencies i.e the symbolic math toolbox
 % Plots a graph based on the arguments passed, that doesn not interfere
 % with the return variables
-function out = DiscDirac(x, a, rate, start, num, plot)
+function out = DiscPulse(x, a, rate, start, num, plot)
 arguments
-    x double 
+    x double
     a double = 1
     rate (1,1) double = 1
     start (1,1) double = 0
@@ -18,4 +18,13 @@ end
         in = find(x == x_vals(i))
         out(in) = a
     end
+
+    %{
+    if plot == "yes"
+        plot(x_vals);
+        title('Singular Dirac impulse')
+        xlabel('Time')
+        ylabel('Amplitude')
+    end
+    %}
 end
