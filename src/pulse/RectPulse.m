@@ -5,13 +5,13 @@
 % with the return variables
 % TODO: check for communications toolbox and fallback onto rectpuls function
 % if available
-function out = RectPulse(x, a, mid, width, plot)
+function out = RectPulse(x, a, mid, width, toPlot)
 arguments
     x double
     a double = 1
     mid (1,1) double = 0
     width (1,1) double = 1
-    plot string = "no"
+    toPlot string = 'false'
 end
     out = zeros(1, length(x))
     samp_rate = (abs(x(1)) + abs(x(length(x))))/(length(x) - 1)
@@ -21,12 +21,9 @@ end
         out(in) = a
     end
 
-    %{
-    if plot == "yes"
-        plot(x_vals);
-        title('Singular Dirac impulse')
-        xlabel('Time')
-        ylabel('Amplitude')
-    end
-    %}
+    if toPlot == 't' | toPlot == "true"
+        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(out) * 2 max(out)*2])
+        Global();
+    end 
 end

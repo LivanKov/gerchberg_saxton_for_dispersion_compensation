@@ -3,14 +3,14 @@
 % No external dependencies i.e the symbolic math toolbox
 % Plots a graph based on the arguments passed, that doesn not interfere
 % with the return variables
-function out = DiscPulse(x, a, rate, start, num, plot)
+function out = DiscPulse(x, a, rate, start, num, toPlot)
 arguments
     x double
     a double = 1
     rate (1,1) double = 1
     start (1,1) double = 0
     num (1,1) double = 1
-    plot string = "no"
+    toPlot string = 'false'
 end
     out = zeros(1, length(x))
     x_vals = start:rate:rate*num;
@@ -19,12 +19,9 @@ end
         out(in) = a
     end
 
-    %{
-    if plot == "yes"
-        plot(x_vals);
-        title('Singular Dirac impulse')
-        xlabel('Time')
-        ylabel('Amplitude')
-    end
-    %}
+    if toPlot == 't' | toPlot == "true"
+        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(out) * 2 max(out)*2])
+        Global();
+    end 
 end
