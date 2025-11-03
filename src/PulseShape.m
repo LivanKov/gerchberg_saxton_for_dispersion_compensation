@@ -2,7 +2,8 @@ classdef PulseShape
     enumeration
         RECT, 
         COS_SQR, 
-        RCOS, 
+        RCOS,
+        SINC
         RRCOS
     end
 end

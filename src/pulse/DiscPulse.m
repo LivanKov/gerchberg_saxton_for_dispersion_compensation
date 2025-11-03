@@ -13,10 +13,13 @@ arguments
     toPlot string = 'false'
 end
     out = zeros(1, length(x))
-    x_vals = start:rate:rate*num;
-    for i = 1:(length(x_vals) - 1)
-        in = find(x == x_vals(i))
-        out(in) = a
+    x_vals = start:rate:rate*num
+    x_vals_it = 1;
+    for i = 1:length(x)
+        if (x_vals_it < length(x_vals) && abs(x(i) - x_vals(x_vals_it)) < 1e-12)
+            out(i) = a
+            x_vals_it = x_vals_it + 1
+        end
     end
 
     if toPlot == 't' | toPlot == "true"

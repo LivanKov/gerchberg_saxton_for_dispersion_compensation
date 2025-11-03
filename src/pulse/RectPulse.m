@@ -15,10 +15,15 @@ arguments
 end
     out = zeros(1, length(x))
     samp_rate = (abs(x(1)) + abs(x(length(x))))/(length(x) - 1)
-    x_vals = (mid-width/2):samp_rate:(mid+width/2);
-    for i = 1:length(x_vals)
-        in = find(ismembertol(x, x_vals(i)))
-        out(in) = a
+    x_vals = (mid-width/2):samp_rate:(mid+width/2)
+    x_vals_it = 1
+    for i = 1:length(x)
+        if (x_vals_it <= length(x_vals) && ...
+                abs(x_vals(x_vals_it) - x(i)) < 1e-12)  
+            fprintf("%d %d", x(i), x_vals(x_vals_it))
+            out(i) = a
+            x_vals_it = x_vals_it + 1
+        end
     end
 
     if toPlot == 't' | toPlot == "true"

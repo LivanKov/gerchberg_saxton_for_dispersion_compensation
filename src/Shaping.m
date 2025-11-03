@@ -11,41 +11,19 @@ arguments
     input double
     shape (1,1) PulseShape
 end
-    pulse = [1];
+    pulse = [];
     switch shape 
         case PulseShape.RECT
-            pulse = GenerateRect();
+            pulse = RectPulse(input);
         case COS_SQR
-            pulse = GenerateCosSqr();
+            pulse = CosSqr(input);
         case RCOS
-            pulse = GenerateRcos();
+            pulse = RCos(input);
         case RRCOS
-            pulse = GenerateRRCos();
+            pulse = RRCos(input);
         otherwise 
             pulse = null;
     end
     output = conv(pulse, input);
-end
-  
-% rectangle impulse multiplied by factor x
-% fallsback to rectpuls from the signal processing toolbox
-function pulse = GenerateRect(x)
-    fprintf("Generating Rectangle");
-    pulse = [1];
-end
-
-function pulse = GenerateCosSqr()
-    fprintf("Generating Square Cosine");
-    pulse = [1];
-end
-
-function pulse = GenerateRcos()
-    fprintf("Generating RCOS");
-    pulse = [1];
-end
-
-function pulse = GenerateRRCos()
-    fprintf("Generating RRCOS");
-    pulse = [1];
 end
 
