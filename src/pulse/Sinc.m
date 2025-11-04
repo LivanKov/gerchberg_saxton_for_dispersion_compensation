@@ -1,13 +1,16 @@
-function out = Sinc(x, toPlot)
+function y = Sinc(x, toPlot)
 arguments
     x double
     toPlot string = 'false'
 end
-    out = sin(pi*x)./(pi*x);
+    y = ones(size(x));
+    nz = (x ~= 0);
+    px = pi * x(nz);
+    y(nz) = sin(px) ./ px; 
 
     if toPlot == 't' | toPlot == "true"
-        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(out) * 2 max(out)*2])
-        Global();
+        plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(y) * 2 max(y)*2])
+        GlobalPlotSettings();
     end 
 end

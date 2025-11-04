@@ -1,4 +1,4 @@
-function out = RRCos(x,rolloff, toPlot)
+function y = RRCos(x,rolloff, toPlot)
 arguments
     x double
     rolloff (1,1) double = 1
@@ -6,11 +6,11 @@ arguments
 end
     sinc = Sinc(x);
 
-    out = sinc .* cos(rolloff * pi * x)./(1 - 4*rolloff^2 * x .^ 2)
+    y = sinc .* cos(rolloff * pi * x)./(1 - 4*rolloff^2 * x .^ 2)
 
     if toPlot == 't' | toPlot == "true"
-        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(out) * 2 max(out)*2])
-        Global();
+        plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(y) * 2 max(y)*2])
+        GlobalPlotSettings();
     end 
 end

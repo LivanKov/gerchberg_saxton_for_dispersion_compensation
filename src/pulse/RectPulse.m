@@ -5,7 +5,7 @@
 % with the return variables
 % TODO: check for communications toolbox and fallback onto rectpuls function
 % if available
-function out = RectPulse(x, a, mid, width, toPlot)
+function y = RectPulse(x, a, mid, width, toPlot)
 arguments
     x double
     a double = 1
@@ -13,7 +13,7 @@ arguments
     width (1,1) double = 1
     toPlot string = 'false'
 end
-    out = zeros(1, length(x))
+    y = zeros(1, length(x))
     samp_rate = (abs(x(1)) + abs(x(length(x))))/(length(x) - 1)
     x_vals = (mid-width/2):samp_rate:(mid+width/2)
     x_vals_it = 1
@@ -21,14 +21,14 @@ end
         if (x_vals_it <= length(x_vals) && ...
                 abs(x_vals(x_vals_it) - x(i)) < 1e-12)  
             fprintf("%d %d", x(i), x_vals(x_vals_it))
-            out(i) = a
+            y(i) = a
             x_vals_it = x_vals_it + 1
         end
     end
 
     if toPlot == 't' | toPlot == "true"
-        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(out) * 2 max(out)*2])
-        Global();
+        plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(y) * 2 max(y)*2])
+        GlobalPlotSettings();
     end 
 end

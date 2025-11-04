@@ -1,4 +1,4 @@
-function out = CosSqr(x, a, mid, width, toPlot)
+function y = CosSqr(x, a, mid, width, toPlot)
 arguments
     x double
     a double = 1
@@ -6,14 +6,14 @@ arguments
     width (1,1) double = 1
     toPlot string = 'false'
 end
-    out = RectPulse(x, a, mid, width, 'f')
+    y = RectPulse(x, a, mid, width, 'f')
     cossqr = a * cos(pi*x/width).^2
 
-    out = out .* cossqr
+    y = y .* cossqr
 
     if toPlot == 't' | toPlot == "true"
-        plot(x, out, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(out) * 2 max(out)*2])
-        Global();
+        plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
+        ylim([min(y) * 2 max(y)*2])
+        GlobalPlotSettings();
     end 
 end

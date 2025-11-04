@@ -1,4 +1,4 @@
-function Global()
+function GlobalPlotSettings()
     set(gcf, 'Color', 'k');        
     set(gca, 'Color', 'k');       
     
