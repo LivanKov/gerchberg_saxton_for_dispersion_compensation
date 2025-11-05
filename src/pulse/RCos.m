@@ -1,15 +1,33 @@
 % Naive Raised Cosine pulse implementation
 % Based on Sinc function, with no external toolbox dependencies
 % assume that T = 1 for now
-function y = RCos(x, rolloff, toPlot)
+% Impulse response:
+%   h(t) = pi / 4T * sinc(1/2a) if t = |T/2a|
+%   1/T * sinc(t/T) * cos(pi * a * t) / (1 - ((2*a*t)/T)^2) else
+
+function y = RCos(x, a, toPlot)
 arguments
     x double
-    rolloff (1,1) double = 1
+    a (1,1) double = 1
     toPlot string = 'false'
 end
-    sinc = Sinc(x);
+    % temporary value
+    T = 1;
 
-    y = sinc .* cos(rolloff * pi * x)./(1 - 4*rolloff^2 * x .^ 2)
+    % Throw error is a < 0 | a > 1
+    % validateattributes
+
+    sinc = Sinc(x/T, 'false');
+    y = sinc;
+
+    if a ~= 0
+        n_e = (abs(x) ~= T/(2*a));
+        denom = (1 - 4 * a^2 * (x(n_e)/T).^2);
+        s_t = cos(a * pi * x(n_e) / T) ./ denom;
+        y(n_e) = y(n_e) .* s_t;
+        e = (abs(x) == T/(2*a));
+        y(e) = pi / (4 * T) * Sinc(1/(2*a));
+    end
 
     if toPlot == 't' | toPlot == "true"
         plot(x, y, 'Color', 'y', 'LineWidth', 1.5);

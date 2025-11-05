@@ -10,6 +10,7 @@ end
 
     if toPlot == 't' | toPlot == "true"
         plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
+        % check if this is a singular value
         ylim([min(y) * 2 max(y)*2])
         GlobalPlotSettings();
     end 
