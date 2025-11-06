@@ -21,10 +21,9 @@ end
     y = sinc;
 
     if a ~= 0
-        n_e = (abs(x) ~= T/(2*a));
-        denom = (1 - 4 * a^2 * (x(n_e)/T).^2);
-        s_t = cos(a * pi * x(n_e) / T) ./ denom;
-        y(n_e) = y(n_e) .* s_t;
+        denom = (1 - 4 * a^2 * (x/T).^2);
+        s_t = cos(a * pi * x/T) ./ denom;
+        y = y .* s_t;
         e = (abs(x) == T/(2*a));
         y(e) = pi / (4 * T) * Sinc(1/(2*a));
     end
