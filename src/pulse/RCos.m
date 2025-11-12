@@ -8,7 +8,7 @@
 function y = RCos(x, a, toPlot)
 arguments
     x double
-    a (1,1) double = 1
+    a (1,1) double = 1 % Rolloff
     toPlot string = 'false'
 end
     % temporary value
