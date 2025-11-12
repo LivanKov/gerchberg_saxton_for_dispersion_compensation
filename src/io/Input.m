@@ -22,8 +22,14 @@ classdef Input < handle
         end
 
         % modulation vs source coding?
+        % Implement BPSK and OOK
+        % Is OOK even needed when dealing with binary data?
         function bin_stream = modulate(mode)
             bin_stream = [];
+        end
+
+        function is_mod = is_modulated
+            is_mod = true;
         end
     end
 end

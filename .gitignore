@@ -1,3 +1,4 @@
 src/*.asv
 src/pulse/*.asv
 src/io/*.asv
+src/gui/*.asv
