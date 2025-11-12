@@ -1,7 +1,0 @@
-function y = Noise(input, a, mode)
-arguments
-    a double % Noise intensity
-    mode int 
-end
-    s = size(input);
-end
