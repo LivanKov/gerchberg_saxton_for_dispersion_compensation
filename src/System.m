@@ -13,7 +13,7 @@
 
 % Function definitions
 
-classdef System
+classdef System < handle
     properties
         InputFilter
         OutputFilter
@@ -21,5 +21,16 @@ classdef System
         Input
         Output
         State
+    end
+
+    methods
+        function sysObj = System(input)
+            if nargin == 1
+                sysObj.Input = input;
+            else
+                i = Input;
+                sysObj.Input = i;
+            end
+        end
     end
 end

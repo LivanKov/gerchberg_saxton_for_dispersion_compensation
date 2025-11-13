@@ -8,6 +8,7 @@
 % Display Signalleistung???
 
 function MainView
+    s = System;
     f = uifigure('Name','ComViewUI');
     f.Position(3:4) = [600 600];
     f.Resize = "off";
