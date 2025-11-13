@@ -21,20 +21,35 @@ function MainView
     
     % Input section
     g_i = uigridlayout(in_sec, [3 1]);
-    g_i.RowHeight = {100, '1x', 100};
-    pulse_dd = uidropdown(g_i);
+    g_i.RowHeight = {150, '1x', 100};
+    g_i1 = uigridlayout(g_i, [1 3]);
+    g_i1.Layout.Column = 1;
+    g_i1.Layout.Row = 1;
+
+    x = -1:0.01:1;
+    p_s = s.inputFilter.pulseShape;
+    y = GeneratePulse(x, p_s);
+    pulse = uiaxes(g_i1);
+
+    pulse_dd = uidropdown(g_i1, ...
+        "ValueChangedFcn",@(src,event) updatePulse(src,event, s, pulse, x));
     pulse_dd.Placeholder = 'Pulse Shape';
     pulse_dd.Items = getPulseShapes();
     pulse_dd.Layout.Row = 1;
     pulse_dd.Layout.Column = 1;
+
+    pulse.Layout.Row = 1;
+    pulse.Layout.Column = 2;
+    ylim(pulse, [0 2]);
+
+    plot(pulse,x,y);
+    GlobalPlotSettings(pulse);
     
     g_i2 = uigridlayout(g_i);
     g_i2.ColumnWidth = {120, '1x'};
     g_i2.RowHeight = {250};
     g_i2.Layout.Column = 1;
     g_i2.Layout.Row = 2;
-
-    ax = uiaxes(g_i);
 
     g_i2i = uigridlayout(g_i2);
     g_i2i.ColumnWidth = {400};
@@ -73,42 +88,28 @@ function MainView
     % Noise section
 
     n_i = uigridlayout(n_sec, [2 2]);
-    x = -pi:0.01:pi;
-    y = 5*sin(x);
+    x_noisy = -pi:0.01:pi;
+    y_noisy = 5*sin(x_noisy);
     n_ii = uigridlayout(n_i, [5 1]);
     n_ii.Layout.Row = 1;
     n_ii.Layout.Column = 1;
-    out_y = ApplyNoise(y, 0);
+    out_y = ApplyNoise(y_noisy, 0);
     noisy_pulse = uiaxes(n_i);
     mode_dd = uidropdown(n_ii);
     mode_dd.Items = {'Additive White Noise'};
     mode_dd.Layout.Row = 1;
     mode_dd.Layout.Column = 1;
-    noise_sld = uislider(n_ii, "ValueChangedFcn",@(src,event)updateSlider(src,event, y, out_y, noisy_pulse, x));
-    noise_sld.Limits = [-100 100];
+    noise_sld = uislider(n_ii, "ValueChangedFcn",@(src,event)updateSlider(src,event, y_noisy, out_y, noisy_pulse, x_noisy));
+    noise_sld.Limits = [-10 10];
     noise_sld.Value = 0;
     noise_sld.Layout.Row = 5;
     noise_sld.Layout.Column = 1;
 
     noisy_pulse.Layout.Row = 1;
     noisy_pulse.Layout.Column = 2;
-    plot(noisy_pulse,x,out_y);
+    plot(noisy_pulse,x_noisy,out_y);
     ylim(noisy_pulse, [-7 7]);
-    noisy_pulse.XGrid = 'on';
-    noisy_pulse.YGrid = 'on';
-
-    noise_sld_2 = uislider(n_i, "ValueChangedFcn",@(src,event)updateSlider(src,event));
-    noise_sld_2.Limits = [-100 100];
-    noise_sld_2.Value = 0;
-    noise_sld_2.Layout.Row = 2;
-    noise_sld_2.Layout.Column = 1;
-
-    noise_sld_3 = uislider(n_i, "ValueChangedFcn",@(src,event)updateSlider(src,event));
-    noise_sld_3.Limits = [-100 100];
-    noise_sld_3.Value = 0;
-    noise_sld_3.Layout.Row = 2;
-    noise_sld_3.Layout.Column = 2;
-
+    GlobalPlotSettings(noisy_pulse);
     % Receiver section
     
 
@@ -170,4 +171,14 @@ function openFileUpload(~, ~)
 
     fullpath = fullfile(path, file);
     disp("Selected file: " + string(fullpath));
+end
+
+function updatePulse(src, ~, sys, pulse_plot, x)
+    new_pulse = src.Value;
+    sys.updatePulse(new_pulse);
+    disp(sys.inputFilter.pulseShape);
+    disp(class(sys.inputFilter.pulseShape));
+    p_s = sys.inputFilter.pulseShape;
+    y = GeneratePulse(x, p_s);
+    plot(pulse_plot,x, y);
 end

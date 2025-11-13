@@ -15,10 +15,10 @@
 
 classdef System < handle
     properties
-        InputFilter
+        inputFilter
         OutputFilter
         Noise
-        Input
+        input
         Output
         State
     end
@@ -26,11 +26,19 @@ classdef System < handle
     methods
         function sysObj = System(input)
             if nargin == 1
-                sysObj.Input = input;
+                sysObj.input = input;
             else
                 i = Input;
-                sysObj.Input = i;
+                sysObj.input = i;
             end
+
+            i_f = InputFilter;
+            sysObj.inputFilter = i_f;
+        end
+
+        function updatePulse(inputObj, pulse)
+            i_f = inputObj.inputFilter;
+            i_f.pulseShape = pulse;
         end
     end
 end
