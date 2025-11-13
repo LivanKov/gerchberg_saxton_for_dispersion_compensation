@@ -18,7 +18,6 @@ function MainView
     uitab(tabs,'Title','Receiver');
     uitab(tabs,'Title','Output');
     
-    
     % Input section
     g_i = uigridlayout(in_sec, [3 1]);
     g_i.RowHeight = {100, '1x', 100};
@@ -46,13 +45,18 @@ function MainView
     input_txt_area.Layout.Row = 1;
     input_txt_area.Layout.Column = 1;
 
-    upload_txt_btn = uibutton(g_i2i, "Text", "Upload Text");
+    upload_txt_btn = uibutton(g_i2i, ...
+        "Text", "Upload Text", ...
+        "ButtonPushedFcn", @(src, event) readInputText(src, event, input_txt_area));
     upload_txt_btn.Layout.Row = 2;
     upload_txt_btn.Layout.Column = 1;
 
-    upload_btn = uibutton(g_i2i, "Text", "Upload File");
+    upload_btn = uibutton(g_i2i, ...
+        "Text", "Upload File", ...
+        "ButtonPushedFcn", @(src, event)openFileUpload);
     upload_btn.Layout.Row = 3;
     upload_btn.Layout.Column = 1;
+    upload_btn.Enable = 'off';
 
     bg = uibuttongroup(g_i2, "SelectionChangedFcn", @(bg, event) uploadSelectionChange(bg, event, ...
         upload_btn, input_txt_area, upload_txt_btn));
@@ -145,4 +149,24 @@ function uploadSelectionChange(~, event, upload_btn, ...
        input_txt_area.Enable = 'on';
        upload_txt_btn.Enable = 'on';
    end
+end
+
+function readInputText(~, ~, input_txt_area)
+    text = input_txt_area.Value{1};
+    if (~length(text))
+        fprintf(2, "Error: Empty message string\n");
+    else 
+        bin_stream = StrToBin(text);
+    end
+end
+
+function openFileUpload(~, ~)
+    [file, path] = uigetfile('*.*', 'Select a File');
+    if isequal(file,0)
+        disp("User cancelled.");
+        return;
+    end
+
+    fullpath = fullfile(path, file);
+    disp("Selected file: " + string(fullpath));
 end
