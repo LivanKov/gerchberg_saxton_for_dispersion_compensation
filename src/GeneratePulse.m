@@ -11,8 +11,6 @@ arguments
     input double
     shape PulseShape
 end
-    disp(size(input));
-    disp(shape);
     switch shape 
         case PulseShape.RECT
             pulse = RectPulse(input, 1, 0 , 1, "false");
@@ -22,6 +20,8 @@ end
             pulse = RCos(input, 1, "false");
         case PulseShape.RRCOS
             pulse = RRCos(input, 1, "false");
+        case PulseShape.SINC
+            pulse = Sinc(input, "false");
         otherwise 
             pulse = RectPulse(input, 1, 0, 1, "false");
     end

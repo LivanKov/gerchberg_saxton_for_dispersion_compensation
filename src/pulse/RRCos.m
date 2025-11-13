@@ -19,7 +19,7 @@ end
     
     if toPlot == 't' | toPlot == "true"
         plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(y) * 2 max(y)*2])
+        ylim([min(y) * 2 max(y)*2]);
         GlobalPlotSettings();
     end 
 end

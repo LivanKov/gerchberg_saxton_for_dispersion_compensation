@@ -14,9 +14,6 @@ end
     % temporary value
     T = 1;
 
-    % Throw error is a < 0 | a > 1
-    % validateattributes
-
     sinc = Sinc(x/T, 'false');
     y = sinc;
 
@@ -30,7 +27,7 @@ end
 
     if toPlot == 't' | toPlot == "true"
         plot(x, y, 'Color', 'y', 'LineWidth', 1.5);
-        ylim([min(y) * 2 max(y)*2])
+        ylim([min(y) * 2 max(y)*2]);
         GlobalPlotSettings();
     end 
 end

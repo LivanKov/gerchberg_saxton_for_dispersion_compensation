@@ -21,12 +21,14 @@ function MainView
     
     % Input section
     g_i = uigridlayout(in_sec, [3 1]);
-    g_i.RowHeight = {150, '1x', 100};
-    g_i1 = uigridlayout(g_i, [1 3]);
+    g_i.RowHeight = {180, '1x', 100};
+    g_i1 = uigridlayout(g_i);
+    g_i1.ColumnWidth = {100, '1x'};
+    g_i1.RowHeight = {150};
     g_i1.Layout.Column = 1;
     g_i1.Layout.Row = 1;
 
-    x = -1:0.01:1;
+    x = -5:0.01:5;
     p_s = s.inputFilter.pulseShape;
     y = GeneratePulse(x, p_s);
     pulse = uiaxes(g_i1);
@@ -40,7 +42,7 @@ function MainView
 
     pulse.Layout.Row = 1;
     pulse.Layout.Column = 2;
-    ylim(pulse, [0 2]);
+    ylim(pulse, [-1 2]);
 
     plot(pulse,x,y);
     GlobalPlotSettings(pulse);
@@ -88,8 +90,9 @@ function MainView
     % Noise section
 
     n_i = uigridlayout(n_sec, [2 2]);
-    x_noisy = -pi:0.01:pi;
-    y_noisy = 5*sin(x_noisy);
+    x_noisy = -5:0.01:5;
+    pulse_shape = s.inputFilter.pulseShape;
+    y_noisy = GeneratePulse(x_noisy, pulse_shape);
     n_ii = uigridlayout(n_i, [5 1]);
     n_ii.Layout.Row = 1;
     n_ii.Layout.Column = 1;
@@ -99,7 +102,7 @@ function MainView
     mode_dd.Items = {'Additive White Noise'};
     mode_dd.Layout.Row = 1;
     mode_dd.Layout.Column = 1;
-    noise_sld = uislider(n_ii, "ValueChangedFcn",@(src,event)updateSlider(src,event, y_noisy, out_y, noisy_pulse, x_noisy));
+    noise_sld = uislider(n_ii, "ValueChangedFcn",@(src,event)updateSlider(src,event, noisy_pulse, x_noisy, s));
     noise_sld.Limits = [-10 10];
     noise_sld.Value = 0;
     noise_sld.Layout.Row = 5;
@@ -124,9 +127,11 @@ function displaySelection(src,event)
     disp("Viewing the " + title + " tab")
 end
 
-function updateSlider(src, event,y, out_y, noisy_pulse, x)
+function updateSlider(src, event, noisy_pulse, x, sys)
     disp("Updating slider");
     disp("Current Noise Level:" + event.Value + "dB");
+    p_s = sys.inputFilter.pulseShape;
+    y = GeneratePulse(x, p_s);
     new_out_y = ApplyNoise(y, event.Value); 
     plot(noisy_pulse, x, new_out_y);
 end
@@ -176,8 +181,6 @@ end
 function updatePulse(src, ~, sys, pulse_plot, x)
     new_pulse = src.Value;
     sys.updatePulse(new_pulse);
-    disp(sys.inputFilter.pulseShape);
-    disp(class(sys.inputFilter.pulseShape));
     p_s = sys.inputFilter.pulseShape;
     y = GeneratePulse(x, p_s);
     plot(pulse_plot,x, y);
