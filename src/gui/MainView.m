@@ -13,68 +13,87 @@ function MainView
     f.Position(3:4) = [600 600];
     f.Resize = "off";
     g = uigridlayout(f,[1 1]);
-    tabs = uitabgroup(g, "SelectionChangedFcn",@displaySelection);
+    tabs = uitabgroup(g);
     in_sec = uitab(tabs,'Title','Input');
     n_sec = uitab(tabs,'Title','Noise');
     uitab(tabs,'Title','Receiver');
     uitab(tabs,'Title','Output');
+    uitab(tabs, 'Title', 'Statistic');
     
     % Input section
     g_i = uigridlayout(in_sec, [3 1]);
     g_i.RowHeight = {180, '1x', 100};
     g_i1 = uigridlayout(g_i);
-    g_i1.ColumnWidth = {100, '1x'};
-    g_i1.RowHeight = {150};
+    g_i1.ColumnWidth = {100, '1x', '1x'};
+    g_i1.RowHeight = {160};
     g_i1.Layout.Column = 1;
     g_i1.Layout.Row = 1;
 
     x = -5:0.01:5;
     p_s = s.inputFilter.pulseShape;
     y = GeneratePulse(x, p_s);
-    pulse = uiaxes(g_i1);
+    t_pulse = uiaxes(g_i1);
+    f_pulse = uiaxes(g_i1);
 
-    pulse_dd = uidropdown(g_i1, ...
-        "ValueChangedFcn",@(src,event) updatePulse(src,event, s, pulse, x));
+    dd_panel = uipanel(g_i1);
+    dd_panel.Layout.Row = 1;
+    dd_panel.Layout.Column = 1;
+    dd_panel.BorderType = 'none';
+
+    dd_label = uilabel(dd_panel);
+    dd_label.Text = "Pulse Shape";
+    dd_label.FontSize = 12;
+    dd_label.Position(1:3) = [10 120 80];
+
+
+    pulse_dd = uidropdown(dd_panel, ...
+        "ValueChangedFcn",@(src,event) updatePulse(src,event, s, t_pulse, x));
     pulse_dd.Placeholder = 'Pulse Shape';
     pulse_dd.Items = getPulseShapes();
-    pulse_dd.Layout.Row = 1;
-    pulse_dd.Layout.Column = 1;
+    pulse_dd.Position(1:3) = [5 100 80];
+    pulse_dd.FontSize = 10;
 
-    pulse.Layout.Row = 1;
-    pulse.Layout.Column = 2;
-    ylim(pulse, [-1 2]);
+    t_pulse.Layout.Row = 1;
+    t_pulse.Layout.Column = 2;
+    ylim(t_pulse, [-1 2]);
 
-    plot(pulse,x,y);
-    GlobalPlotSettings(pulse);
+    f_pulse.Layout.Row = 1;
+    f_pulse.Layout.Column = 3;
+
+    plot(t_pulse,x,y);
+    % GlobalPlotSettings(t_pulse);
     
     g_i2 = uigridlayout(g_i);
     g_i2.ColumnWidth = {120, '1x'};
-    g_i2.RowHeight = {250};
+    g_i2.RowHeight = {110};
     g_i2.Layout.Column = 1;
     g_i2.Layout.Row = 2;
 
-    g_i2i = uigridlayout(g_i2);
-    g_i2i.ColumnWidth = {400};
-    g_i2i.RowHeight = {80, 25, 25};
-    g_i2i.Layout.Row = 1;
-    g_i2i.Layout.Column = 2;
 
-    input_txt_area = uitextarea(g_i2i, "Placeholder", "Enter message");
-    input_txt_area.Layout.Row = 1;
-    input_txt_area.Layout.Column = 1;
+    input_panel = uipanel(g_i2);
+    input_panel.Layout.Row = 1;
+    input_panel.Layout.Column = 2;
+    input_panel.BorderType = 'none';
 
-    upload_txt_btn = uibutton(g_i2i, ...
+    input_txt_area = uitextarea(input_panel, "Placeholder", "Enter message");
+    input_txt_area.Position(1:4) = [5 1 180 110];
+
+    upload_txt_btn = uibutton(input_panel, ...
         "Text", "Upload Text", ...
         "ButtonPushedFcn", @(src, event) readInputText(src, event, input_txt_area));
-    upload_txt_btn.Layout.Row = 2;
-    upload_txt_btn.Layout.Column = 1;
+    upload_txt_btn.Position(1:4) = [200 90 80 20];
 
-    upload_btn = uibutton(g_i2i, ...
+    upload_txt_switch = uiswitch(input_panel);
+    upload_txt_switch.Items = ["Raw" "Binary"];
+    upload_txt_switch.Position(1:2) = [230 60];
+    upload_txt_switch.ValueChangedFcn = @(src, event) updateTextInputMode( ...
+        src, event, s);
+
+    upload_btn = uibutton(input_panel, ...
         "Text", "Upload File", ...
         "ButtonPushedFcn", @(src, event)openFileUpload);
-    upload_btn.Layout.Row = 3;
-    upload_btn.Layout.Column = 1;
     upload_btn.Enable = 'off';
+    upload_btn.Position(1:4) = [200 30 80 20];
 
     bg = uibuttongroup(g_i2, "SelectionChangedFcn", @(bg, event) uploadSelectionChange(bg, event, ...
         upload_btn, input_txt_area, upload_txt_btn));
@@ -86,6 +105,8 @@ function MainView
     opt_2.Tag = 'file';
     bg.Layout.Row = 1;
     bg.Layout.Column = 1;
+    opt_1.FontSize = 10;
+    opt_2.FontSize = 10;
 
     % Noise section
 
@@ -120,14 +141,7 @@ function MainView
     % Output section
 end
 
-
-function displaySelection(src,event)
-    t = event.NewValue;
-    title = t.Title;
-    disp("Viewing the " + title + " tab")
-end
-
-function updateSlider(src, event, noisy_pulse, x, sys)
+function updateSlider(~, event, noisy_pulse, x, sys)
     disp("Updating slider");
     disp("Current Noise Level:" + event.Value + "dB");
     p_s = sys.inputFilter.pulseShape;
@@ -160,7 +174,7 @@ end
 
 function readInputText(~, ~, input_txt_area)
     text = input_txt_area.Value{1};
-    if (~length(text))
+    if (~~isempty(text))
         fprintf(2, "Error: Empty message string\n");
     else 
         bin_stream = StrToBin(text);
@@ -184,4 +198,15 @@ function updatePulse(src, ~, sys, pulse_plot, x)
     p_s = sys.inputFilter.pulseShape;
     y = GeneratePulse(x, p_s);
     plot(pulse_plot,x, y);
+end
+
+function updateTextInputMode(src, ~, sys)
+    val = src.Value;
+    switch val
+        case "Raw"
+            sys.Input.mode = InputMode.TEXT_RAW;
+        case "Binary"
+            sys.Input.mode = InputMode.TEXT_BINARY;
+    end
+end
 end

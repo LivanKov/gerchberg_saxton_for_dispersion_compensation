@@ -3,8 +3,9 @@ classdef PulseShape
         RECT, 
         COS_SQR, 
         RCOS,
-        SINC
-        RRCOS
+        SINC,
+        RRCOS,
+        MANCHESTER
     end
 end
 

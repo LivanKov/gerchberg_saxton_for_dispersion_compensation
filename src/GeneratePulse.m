@@ -22,6 +22,8 @@ end
             pulse = RRCos(input, 1, "false");
         case PulseShape.SINC
             pulse = Sinc(input, "false");
+        case PulseShape.MANCHESTER
+            pulse = Manchester(input);
         otherwise 
             pulse = RectPulse(input, 1, 0, 1, "false");
     end

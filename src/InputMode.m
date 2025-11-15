@@ -1,6 +1,7 @@
 classdef InputMode
     enumeration
         FILE,
-        RAW
+        TEXT_RAW,
+        TEXT_BINARY
     end
 end

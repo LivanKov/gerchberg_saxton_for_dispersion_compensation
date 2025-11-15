@@ -9,7 +9,7 @@ classdef Input < handle
 
     methods
         function inputObj = Input()
-            inputObj.mode = InputMode.RAW;
+            inputObj.mode = InputMode.TEXT_RAW;
             inputObj.stream = [];
             inputObj.size = [0 0];
         end
