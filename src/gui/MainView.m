@@ -22,9 +22,9 @@ function MainView
     
     % Input section
     g_i = uigridlayout(in_sec, [3 1]);
-    g_i.RowHeight = {180, '1x', 100};
+    g_i.RowHeight = {180, '1x', '1x'};
     g_i1 = uigridlayout(g_i);
-    g_i1.ColumnWidth = {100, '1x', '1x'};
+    g_i1.ColumnWidth = {110, '1x', '1x'};
     g_i1.RowHeight = {160};
     g_i1.Layout.Column = 1;
     g_i1.Layout.Row = 1;
@@ -94,19 +94,30 @@ function MainView
         "ButtonPushedFcn", @(src, event)openFileUpload);
     upload_btn.Enable = 'off';
     upload_btn.Position(1:4) = [200 30 80 20];
+    
+    input_mode_panel = uipanel(g_i2);
+    input_mode_panel.Layout.Row = 1;
+    input_mode_panel.Layout.Column = 1;
 
-    bg = uibuttongroup(g_i2, "SelectionChangedFcn", @(bg, event) uploadSelectionChange(bg, event, ...
-        upload_btn, input_txt_area, upload_txt_btn));
+    bg = uibuttongroup(input_mode_panel, "SelectionChangedFcn", @(bg, event) uploadSelectionChange(bg, event, ...
+        upload_btn, input_txt_area, upload_txt_btn, upload_txt_switch));
+    bg.BorderType = 'none';
     opt_1 = uiradiobutton(bg,"Text","Enter message", ...
         "Position",[10 50 100 22]);
     opt_1.Tag = 'msg';
     opt_2 = uiradiobutton(bg,"Text","Upload file", ...
         "Position",[10 28 100 22]);
     opt_2.Tag = 'file';
-    bg.Layout.Row = 1;
-    bg.Layout.Column = 1;
+    bg.Position(1:4) = [5 25 100 80];
     opt_1.FontSize = 10;
     opt_2.FontSize = 10;
+
+    input_analysis_panel = uipanel(g_i);
+    input_analysis_panel.Layout.Column = 1;
+    input_analysis_panel.Layout.Row = 3;
+
+    input_analysis_graph = uiaxes(input_analysis_panel);
+    input_analysis_graph.Position(4) = 230;
 
     % Noise section
 
@@ -159,16 +170,18 @@ function names_str = getPulseShapes
 end
 
 function uploadSelectionChange(~, event, upload_btn, ...
-    input_txt_area, upload_txt_btn)
+    input_txt_area, upload_txt_btn, upload_txt_switch)
    opt = event.NewValue.Tag;
    if opt == "file"
        upload_btn.Enable = 'on';
        input_txt_area.Enable = 'off';
        upload_txt_btn.Enable = 'off';
+       upload_txt_switch.Enable = 'off';
    else
        upload_btn.Enable = 'off';
        input_txt_area.Enable = 'on';
        upload_txt_btn.Enable = 'on';
+       upload_txt_switch.Enable = 'on';
    end
 end
 
@@ -204,9 +217,8 @@ function updateTextInputMode(src, ~, sys)
     val = src.Value;
     switch val
         case "Raw"
-            sys.Input.mode = InputMode.TEXT_RAW;
+            sys.input.mode = InputMode.TEXT_RAW;
         case "Binary"
-            sys.Input.mode = InputMode.TEXT_BINARY;
+            sys.input.mode = InputMode.TEXT_BINARY;
     end
-end
 end
