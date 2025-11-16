@@ -15,8 +15,8 @@
 
 classdef System < handle
     properties
-        inputFilter
-        OutputFilter
+        inputFilter InputFilter
+        OutputFilter OutputFilter
         Noise
         input
         Output

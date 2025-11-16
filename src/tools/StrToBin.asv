@@ -5,8 +5,6 @@
 function y = StrToBin(input, mode)
    if (~isa(input, 'string') & ~isa(input, 'char'))
         fprintf(2, "Error: StrToBin only accepts char and string types as input\n");
-        y = [];
-        return;
    end 
 
    if (isa(input, 'string'))
@@ -17,12 +15,10 @@ function y = StrToBin(input, mode)
 
    if mode == InputMode.TEXT_BINARY && any(check)
         fprintf(2, "Error: Binary mode only accepts 1's and 0's");
-        y = [];
-        return;
    end
 
    if mode == InputMode.TEXT_BINARY
-        y = input - '0';
+        y = input - '0'
         return;
    end
 
@@ -30,4 +26,5 @@ function y = StrToBin(input, mode)
    codes = dec2bin(codes, 8);
    bits = codes' - '0';
    y = bits(:)';
+   
 end

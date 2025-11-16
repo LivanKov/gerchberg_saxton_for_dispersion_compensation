@@ -19,7 +19,7 @@ classdef Input < handle
             inputObj.size(2) = length(inputObj.stream)/8;
         end
 
-        function updateContents(path, inputObj)
+        function updateFileContents(path, inputObj)
             arguments
                 path string
                 inputObj Input
