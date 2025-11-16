@@ -1,12 +1,13 @@
 classdef InputSec < handle
     properties
         parent % Parent panel
-        system System % System object
+        system System % System object reference
     end
 
     methods
         function this = InputSec(panel, s)
             this.parent = panel;
+            this.system = s;
             g_i = uigridlayout(this.parent, [3 1]);
             g_i.RowHeight = {180, '1x', '1x'};
             g_i1 = uigridlayout(g_i);
