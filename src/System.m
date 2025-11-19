@@ -36,9 +36,14 @@ classdef System < handle
             sysObj.inputFilter = i_f;
         end
 
-        function updatePulse(inputObj, pulse)
-            i_f = inputObj.inputFilter;
+        function updatePulse(sysObj, pulse)
+            i_f = sysObj.inputFilter;
             i_f.pulseShape = pulse;
+        end
+
+        function ingest(sysObj, stream)
+            in = sysObj.input;
+            in.readInput(stream);
         end
     end
 end

@@ -1,7 +1,9 @@
 classdef InputSec < handle
-    properties
+    properties (Access = private)
         parent % Parent panel
         system System % System object reference
+        mode_label % Access the data mode label
+        size_label % Access the data size label
     end
 
     methods
@@ -97,15 +99,15 @@ classdef InputSec < handle
             opt_1.FontSize = 10;
             opt_2.FontSize = 10;
         
-            upload_mode_label = uilabel(input_mode_panel);
-            upload_mode_label.Text = "Mode: ";
-            upload_mode_label.Position(1:3) = [15 25 50];
-            upload_mode_label.FontSize = 10;
+            this.mode_label = uilabel(input_mode_panel);
+            this.mode_label.Text = "Mode: ";
+            this.mode_label.Position(1:3) = [15 25 50];
+            this.mode_label.FontSize = 10;
         
-            upload_size_label = uilabel(input_mode_panel);
-            upload_size_label.Text = "Size: ";
-            upload_size_label.Position(1:3) = [15 5 50];
-            upload_size_label.FontSize = 10;
+            this.size_label = uilabel(input_mode_panel);
+            this.size_label.Text = "Size: ";
+            this.size_label.Position(1:3) = [15 5 50];
+            this.size_label.FontSize = 10;
         
             input_analysis_panel = uipanel(g_i);
             input_analysis_panel.Layout.Column = 1;
@@ -128,15 +130,14 @@ classdef InputSec < handle
             plot(pulse_plot,x, y);
         end
 
-        function readInputText(~ ,~ , ~, input_txt_area, sys)
+        function readInputText(this ,~ , ~, input_txt_area, sys)
             text = input_txt_area.Value{1};
             if (~~isempty(text))
                 fprintf(2, "Error: Empty message string\n");
             else 
-                bin_stream = StrToBin(text, sys.input.mode);
-        
+                sys.input.readInput(text);
                 if ~isempty(bin_stream)
-                    updateDataLabels(sys);
+                    this.updateDataLabels();
                 end
             end
         end
@@ -154,12 +155,10 @@ classdef InputSec < handle
         function openFileUpload(~, ~, ~, sys)
             [file, path] = uigetfile('*.*', 'Select a File');
             if isequal(file,0)
-                disp("User cancelled.");
                 return;
             end
         
             fullpath = fullfile(path, file);
-            disp("Selected file: " + string(fullpath));
             sys.input.updateFileContents(fullpath);
         end
 
@@ -179,8 +178,9 @@ classdef InputSec < handle
            end
         end
 
-        function updateDataLabels(~, ~)
-            
+        function updateDataLabels(this)
+            this.size_label.Text = "Check";
+            this.mode_label.Text = "Check 2";
         end
     end
 end

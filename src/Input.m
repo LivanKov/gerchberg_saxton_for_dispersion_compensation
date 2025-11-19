@@ -14,28 +14,43 @@ classdef Input < handle
             inputObj.size = [0 0];
         end
 
-        function updateSize(inputObj)
-            inputObj.size(1) = length(inputObj.stream);
-            inputObj.size(2) = length(inputObj.stream)/8;
-        end
-
-        function updateFileContents(path, inputObj)
-            arguments
-                path string
-                inputObj Input
-            end
-            
+        function updateFileContents(inputObj, path)
             fid = fopen(path, 'rb');
 
-            if (fid ~= -1)
+            if inputObj.mode ~= InputMode.FILE
+                fprintf(2, "Error: Cannot read file due to wrong Input mode. Aborting\n");
+                return;
+            end
+
+            if fid ~= -1
                 inputObj.stream = fread(fid, "ubit1", 'b')';
                 len = length(bin_stream);
                 fprintf(1, "Read %s\nSize:\n   %d bits\n   %d bytes\n", path, len, len/8);
                 fclose(fid);
+                inputObj.updateSize();
             else 
                 inputObj.stream = [];
                 fprintf(2, "Error: the input file does not exist or could not be opened\n");
             end
+        end
+
+
+        function readInput(inputObj, input)
+            if inputObj.mode == InputMode.FILE
+                fprintf(2, "Error: Cannot read input due to wrong Input mode. Aborting\n");
+                return;
+            end
+            bin_stream = StrToBin(input, inputObj.mode);
+            inputObj.stream = bin_stream; 
+            inputObj.updateSize();
+        end
+
+        function switchToRaw(inputObj)
+            inputObj.mode = InputMode.TEXT_RAW;
+        end
+
+        function switchToBinary(inputObj)
+            inputObj.mode = InputMode.TEXT_BINARY;
         end
 
         % modulation vs source coding?
@@ -43,6 +58,13 @@ classdef Input < handle
         % Is OOK even needed when dealing with binary data?
         function modulate(inputObj)
             inputObj.stream = [];
+        end
+    end
+
+    methods (Access = private)
+        function updateSize(inputObj)
+            inputObj.size(1) = length(inputObj.stream);
+            inputObj.size(2) = length(inputObj.stream)/8;
         end
     end
 end
