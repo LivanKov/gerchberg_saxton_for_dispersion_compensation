@@ -3,7 +3,7 @@ arguments
     input double % input vector
     a double % Noise intensity
 end
-    s = size(input);
-    noise = wgn(s(1), s(2), a);
+    s = length(input);
+    noise = randn(1, s) * sqrt(a);
     y = input + noise;
 end

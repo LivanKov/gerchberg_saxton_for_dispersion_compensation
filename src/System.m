@@ -17,7 +17,6 @@ classdef System < handle
     properties
         inputFilter InputFilter
         OutputFilter OutputFilter
-        Noise
         input
         Output
         State SystemState
@@ -62,6 +61,12 @@ classdef System < handle
             sysObj.State = SystemState.PULSE_SHAPED;
             out = sysObj.inputFilter.passThrough(sysObj.currentVals);
             sysObj.currentVals = out;
+        end
+
+        function addNoise(sysObj, a)
+            sysObj.State = SystemState.NOISE_ADDED;
+            noisy_vals = ApplyNoise(sysObj.currentVals, a);
+            sysObj.currentVals = noisy_vals;
         end
 
         function plot(sysObj)
