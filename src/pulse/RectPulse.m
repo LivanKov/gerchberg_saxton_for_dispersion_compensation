@@ -13,17 +13,9 @@ arguments
     width (1,1) double = 1
     toPlot string = 'false'
 end
-    y = zeros(1, length(x));
     samp_rate = (abs(x(1)) + abs(x(length(x))))/(length(x) - 1);
     x_vals = (mid-width/2):samp_rate:(mid+width/2);
-    x_vals_it = 1;
-    for i = 1:length(x)
-        if (x_vals_it <= length(x_vals) && ...
-                abs(x_vals(x_vals_it) - x(i)) < 1e-12)  
-            y(i) = a;
-            x_vals_it = x_vals_it + 1;
-        end
-    end
+    y = abs(x) <= x_vals(end);
 
     if toPlot == 't' | toPlot == "true"
         plot(x, y, 'Color', 'y', 'LineWidth', 1.5);

@@ -20,7 +20,17 @@ classdef System < handle
         Noise
         input
         Output
-        State
+        State SystemState
+        currentVals; % current values output by the filter etc.
+    end
+
+    properties(Access = private)
+        t_vec % time vector used within the simulation
+    end
+
+    properties(Constant)
+        PRECISION = 0.01 % vector granularity / Precision
+        SAMPLING_INTERVAL = 1; % length of a single pulse
     end
 
     methods
@@ -31,7 +41,7 @@ classdef System < handle
                 i = Input;
                 sysObj.input = i;
             end
-
+            sysObj.State = SystemState.START;
             i_f = InputFilter;
             sysObj.inputFilter = i_f;
         end
@@ -44,6 +54,22 @@ classdef System < handle
         function ingest(sysObj, stream)
             in = sysObj.input;
             in.readInput(stream);
+            sysObj.rebuildTimeVec();
+            sysObj.State = SystemState.INPUT_READ;
+            sysObj.currentVals = sysObj.input.stream;
+        end
+
+        function shapeInput(sysObj)
+            sysObj.State = SystemState.PULSE_SHAPED;
+
+        end
+    end
+
+    methods(Access = private)
+        function rebuildTimeVec(sysObj)
+            stream = sysObj.input.stream;
+            len = System.SAMPLING_INTERVAL * length(stream);
+            sysObj.t_vec = 0:System.PRECISION:len;
         end
     end
 end
