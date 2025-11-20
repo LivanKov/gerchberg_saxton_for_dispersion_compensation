@@ -23,7 +23,7 @@ classdef MainView < handle
             
             % Input section
             InputSec(in_sec, s);
-        
+    
             % Noise section
             NoiseSec(n_sec, s);
         

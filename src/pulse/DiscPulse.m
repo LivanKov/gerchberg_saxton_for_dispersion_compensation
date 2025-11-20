@@ -3,21 +3,22 @@
 % No external dependencies i.e the symbolic math toolbox
 % Plots a graph based on the arguments passed, that doesn not interfere
 % with the return variables
-function y = DiscPulse(x, a, rate, start, num, toPlot)
+function y = DiscPulse(x, a, rate, start, toPlot)
 arguments
     x double
-    a double = 1
+    a double
     rate (1,1) double = 1
-    start (1,1) double = 0
-    num (1,1) double = 1
+    start (1,1) double = 0;
     toPlot string = 'false'
 end
     y = zeros(1, length(x));
-    x_vals = start:rate:rate*num;
+    x_vals = start:rate:rate*length(a);
     x_vals_it = 1;
+    a_vals_it = 1;
     for i = 1:length(x)
         if (x_vals_it < length(x_vals) && abs(x(i) - x_vals(x_vals_it)) < 1e-12)
-            y(i) = a;
+            y(i) = a(a_vals_it);
+            a_vals_it = a_vals_it + 1;
             x_vals_it = x_vals_it + 1;
         end
     end

@@ -8,8 +8,10 @@ classdef InputFilter < handle
         end
 
         function out = passThrough(inputFilterObj, input)
-            
-            out = conv()
+            len = System.SAMPLING_INTERVAL * length(input);
+            time_vec = System.START:System.PRECISION:len;
+            pulse = GeneratePulse(time_vec, inputFilterObj.pulseShape);
+            out = conv(input, pulse, 'same');
         end
     end
 end

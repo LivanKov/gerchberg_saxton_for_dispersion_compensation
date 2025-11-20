@@ -30,7 +30,8 @@ classdef System < handle
 
     properties(Constant)
         PRECISION = 0.01 % vector granularity / Precision
-        SAMPLING_INTERVAL = 1; % length of a single pulse
+        SAMPLING_INTERVAL = 1.2; % length of a single pulse
+        START = 0; % Time vector start
     end
 
     methods
@@ -61,7 +62,15 @@ classdef System < handle
 
         function shapeInput(sysObj)
             sysObj.State = SystemState.PULSE_SHAPED;
+            dirac_pulses = DiscPulse(x, systemObj.stream, System.SAMPLING_INTERVAL, System.START);
+            out = sysObj.inputFilter.passThrough(dirac_pulses);
+            sysObj.currentVals = out;
+        end
 
+        function plot(sysObj)
+            plot(sysObj.t_vec, sysObj.currentVals, 'Color', 'y', 'LineWidth', 1.5);
+            ylim([min(sysObj.currentVals) * 2 max(sysObj.currentVals)*2]);
+            GlobalPlotSettings();
         end
     end
 
@@ -69,7 +78,7 @@ classdef System < handle
         function rebuildTimeVec(sysObj)
             stream = sysObj.input.stream;
             len = System.SAMPLING_INTERVAL * length(stream);
-            sysObj.t_vec = 0:System.PRECISION:len;
+            sysObj.t_vec = System.START:System.PRECISION:len;
         end
     end
 end
