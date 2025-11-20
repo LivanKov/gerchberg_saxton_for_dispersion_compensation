@@ -22,15 +22,12 @@ classdef System < handle
         Output
         State SystemState
         currentVals; % current values output by the filter etc.
-    end
-
-    properties(Access = private)
-        t_vec % time vector used within the simulation
+        t_vec
     end
 
     properties(Constant)
         PRECISION = 0.01 % vector granularity / Precision
-        SAMPLING_INTERVAL = 1.2; % length of a single pulse
+        SAMPLING_INTERVAL = 1.0; % length of a single pulse
         START = 0; % Time vector start
     end
 
@@ -57,17 +54,21 @@ classdef System < handle
             in.readInput(stream);
             sysObj.rebuildTimeVec();
             sysObj.State = SystemState.INPUT_READ;
-            sysObj.currentVals = sysObj.input.stream;
+            sysObj.currentVals = DiscPulse(sysObj.t_vec, in.stream, ...
+                System.SAMPLING_INTERVAL, System.START);
         end
 
         function shapeInput(sysObj)
             sysObj.State = SystemState.PULSE_SHAPED;
-            dirac_pulses = DiscPulse(x, systemObj.stream, System.SAMPLING_INTERVAL, System.START);
-            out = sysObj.inputFilter.passThrough(dirac_pulses);
+            out = sysObj.inputFilter.passThrough(sysObj.currentVals);
             sysObj.currentVals = out;
         end
 
         function plot(sysObj)
+            if isempty(sysObj.t_vec) || isempty(sysObj.currentVals)
+                return
+            end
+
             plot(sysObj.t_vec, sysObj.currentVals, 'Color', 'y', 'LineWidth', 1.5);
             ylim([min(sysObj.currentVals) * 2 max(sysObj.currentVals)*2]);
             GlobalPlotSettings();
