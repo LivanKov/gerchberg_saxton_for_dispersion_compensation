@@ -14,6 +14,7 @@ classdef MainView < handle
             f.Position(3:4) = [600 600];
             f.Resize = "off";
             g = uigridlayout(f,[1 1]);
+            g.Padding = [0 0 0 0];
             tabs = uitabgroup(g);
             in_sec = uitab(tabs,'Title','Input');
             n_sec = uitab(tabs,'Title','Noise');

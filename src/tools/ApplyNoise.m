@@ -1,3 +1,5 @@
+% TODO: Negative variance
+
 function y = ApplyNoise(input, a)
 arguments
     input double % input vector
