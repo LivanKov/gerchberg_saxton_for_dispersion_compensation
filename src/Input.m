@@ -14,57 +14,57 @@ classdef Input < handle
             inputObj.size = [0 0];
         end
 
-        function updateFileContents(inputObj, path)
+        function updateFileContents(this, path)
             fid = fopen(path, 'rb');
 
-            if inputObj.mode ~= InputMode.FILE
+            if this.mode ~= InputMode.FILE
                 fprintf(2, "Error: Cannot read file due to wrong Input mode. Aborting\n");
                 return;
             end
 
             if fid ~= -1
-                inputObj.stream = fread(fid, "ubit1", 'b')';
+                this.stream = fread(fid, "ubit1", 'b')';
                 len = length(bin_stream);
                 fprintf(1, "Read %s\nSize:\n   %d bits\n   %d bytes\n", path, len, len/8);
                 fclose(fid);
-                inputObj.updateSize();
+                this.updateSize();
             else 
-                inputObj.stream = [];
+                this.stream = [];
                 fprintf(2, "Error: the input file does not exist or could not be opened\n");
             end
         end
 
 
-        function readInput(inputObj, input)
-            if inputObj.mode == InputMode.FILE
+        function readInput(this, input)
+            if this.mode == InputMode.FILE
                 fprintf(2, "Error: Cannot read input due to wrong Input mode. Aborting\n");
                 return;
             end
-            bin_stream = StrToBin(input, inputObj.mode);
-            inputObj.stream = bin_stream; 
-            inputObj.updateSize();
+            bin_stream = StrToBin(input, this.mode);
+            this.stream = bin_stream; 
+            this.updateSize();
         end
 
-        function switchToRaw(inputObj)
-            inputObj.mode = InputMode.TEXT_RAW;
+        function switchToRaw(this)
+            this.mode = InputMode.TEXT_RAW;
         end
 
-        function switchToBinary(inputObj)
-            inputObj.mode = InputMode.TEXT_BINARY;
+        function switchToBinary(this)
+            this.mode = InputMode.TEXT_BINARY;
         end
 
         % modulation vs source coding?
         % Implement BPSK and OOK
         % Is OOK even needed when dealing with binary data?
-        function modulate(inputObj)
-            inputObj.stream = [];
+        function modulate(this)
+            this.stream = [];
         end
     end
 
     methods (Access = private)
-        function updateSize(inputObj)
-            inputObj.size(1) = length(inputObj.stream);
-            inputObj.size(2) = length(inputObj.stream)/8;
+        function updateSize(this)
+            this.size(1) = length(this.stream);
+            this.size(2) = length(this.stream)/8;
         end
     end
 end

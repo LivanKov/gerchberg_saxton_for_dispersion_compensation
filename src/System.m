@@ -43,48 +43,48 @@ classdef System < handle
             sysObj.inputFilter = i_f;
         end
 
-        function updatePulse(sysObj, pulse)
-            i_f = sysObj.inputFilter;
+        function updatePulse(this, pulse)
+            i_f = this.inputFilter;
             i_f.pulseShape = pulse;
         end
 
-        function ingest(sysObj, stream)
-            in = sysObj.input;
+        function ingest(this, stream)
+            in = this.input;
             in.readInput(stream);
-            sysObj.rebuildTimeVec();
-            sysObj.State = SystemState.INPUT_READ;
-            sysObj.currentVals = DiscPulse(sysObj.t_vec, in.stream, ...
+            this.rebuildTimeVec();
+            this.State = SystemState.INPUT_READ;
+            this.currentVals = DiscPulse(this.t_vec, in.stream, ...
                 System.SAMPLING_INTERVAL, System.START);
         end
 
-        function shapeInput(sysObj)
-            sysObj.State = SystemState.PULSE_SHAPED;
-            out = sysObj.inputFilter.passThrough(sysObj.currentVals);
-            sysObj.currentVals = out;
+        function shapeInput(this)
+            this.State = SystemState.PULSE_SHAPED;
+            out = this.inputFilter.passThrough(this.currentVals);
+            this.currentVals = out;
         end
 
-        function addNoise(sysObj, a)
-            sysObj.State = SystemState.NOISE_ADDED;
-            noisy_vals = ApplyNoise(sysObj.currentVals, a);
-            sysObj.currentVals = noisy_vals;
+        function addNoise(this, a)
+            this.State = SystemState.NOISE_ADDED;
+            noisy_vals = ApplyNoise(this.currentVals, a);
+            this.currentVals = noisy_vals;
         end
 
-        function plot(sysObj)
-            if isempty(sysObj.t_vec) || isempty(sysObj.currentVals)
+        function plot(this)
+            if isempty(this.t_vec) || isempty(this.currentVals)
                 return
             end
 
-            plot(sysObj.t_vec, sysObj.currentVals, 'Color', 'y', 'LineWidth', 1.5);
-            ylim([min(sysObj.currentVals) * 2 max(sysObj.currentVals)*2]);
+            plot(this.t_vec, this.currentVals, 'Color', 'y', 'LineWidth', 1.5);
+            ylim([min(this.currentVals) * 2 max(this.currentVals)*2]);
             GlobalPlotSettings();
         end
     end
 
     methods(Access = private)
-        function rebuildTimeVec(sysObj)
-            stream = sysObj.input.stream;
+        function rebuildTimeVec(this)
+            stream = this.input.stream;
             len = System.SAMPLING_INTERVAL * length(stream);
-            sysObj.t_vec = System.START:System.PRECISION:len;
+            this.t_vec = System.START:System.PRECISION:len;
         end
     end
 end
