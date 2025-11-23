@@ -9,8 +9,8 @@ classdef InputFilter < handle
 
         function out = passThrough(this, input)
             len = System.SAMPLING_INTERVAL * length(input);
-            start = System.START - len / 2;
-            sym_time_vec = start:System.PRECISION:(len/2);
+            start = System.START - len/2;
+            sym_time_vec = start:System.SYMBOL_PRECISION:len/2;
             pulse = GeneratePulse(sym_time_vec, this.pulseShape);
             out = conv(input, pulse, 'same');
         end

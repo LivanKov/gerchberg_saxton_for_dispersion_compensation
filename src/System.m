@@ -25,7 +25,7 @@ classdef System < handle
     end
 
     properties(Constant)
-        PRECISION = 0.01 % vector granularity / Precision
+        SYMBOL_PRECISION = 0.01 % vector granularity / Precision
         SAMPLING_INTERVAL = 1.0; % length of a single pulse
         START = 0; % Time vector start
     end
@@ -46,6 +46,8 @@ classdef System < handle
         function updatePulse(this, pulse)
             i_f = this.inputFilter;
             i_f.pulseShape = pulse;
+            this.currentVals = DiscPulse(this.t_vec, this.input.stream, ...
+                System.SAMPLING_INTERVAL, System.START);
         end
 
         function ingest(this, stream)
@@ -84,7 +86,7 @@ classdef System < handle
         function rebuildTimeVec(this)
             stream = this.input.stream;
             len = System.SAMPLING_INTERVAL * length(stream);
-            this.t_vec = System.START:System.PRECISION:len;
+            this.t_vec = System.START:System.SYMBOL_PRECISION:len;
         end
     end
 end
