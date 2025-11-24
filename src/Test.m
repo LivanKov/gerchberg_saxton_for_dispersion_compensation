@@ -27,7 +27,7 @@ data_upsampled(1:fs:end) = data_bipolar;
 tx_signal = conv(data_upsampled, sinc_pulse, 'same');
 
 %% Add noise (optional - adjust SNR as needed)
-SNR_dB = 20;  % Signal-to-Noise Ratio in dB
+SNR_dB = 5000;  % Signal-to-Noise Ratio in dB
 tx_signal_noisy = awgn(tx_signal, SNR_dB, 'measured');
 
 %% Construct Eye Diagram

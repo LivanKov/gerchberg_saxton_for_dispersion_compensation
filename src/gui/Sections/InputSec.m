@@ -4,6 +4,7 @@ classdef InputSec < handle
         system System % System object reference
         mode_label % Access the data mode label
         size_label % Access the data size label
+        input_analysis_graph % Access the input analysis graph
     end
 
     methods
@@ -15,11 +16,12 @@ classdef InputSec < handle
             g_i.RowHeight = {180, 130, '1x'};
             
             g_i1 = uigridlayout(g_i);
-            g_i1.ColumnWidth = {110, '1x', 250};
+            g_i1.ColumnWidth = {110, '1x', '1x'};
             g_i1.RowHeight = {160};
             g_i1.Layout.Column = 1;
             g_i1.Layout.Row = 1;
             g_i1.BackgroundColor = [0.15 0.15 0.18];
+            g_i1.Padding(1) = 30;
             
             x = -5:0.01:5;
             p_s = s.inputFilter.pulseShape;
@@ -74,6 +76,7 @@ classdef InputSec < handle
             g_i2.Layout.Column = 1;
             g_i2.Layout.Row = 2;
             g_i2.BackgroundColor = [0.15 0.15 0.18];
+            g_i2.Padding(1) = [30];
         
         
             input_panel = uipanel(g_i2);
@@ -150,13 +153,14 @@ classdef InputSec < handle
             input_analysis_panel.Layout.Row = 3;
             input_analysis_panel.BackgroundColor = [0.15 0.15 0.18];
         
-            input_analysis_graph = uiaxes(input_analysis_panel);
-            input_analysis_graph.Position(4) = 250;
-            input_analysis_graph.Color = [0.18 0.18 0.21];
-            input_analysis_graph.XColor = [0.6 0.6 0.65];
-            input_analysis_graph.YColor = [0.6 0.6 0.65];
-            input_analysis_graph.GridColor = [0.3 0.3 0.35];
-            input_analysis_graph.MinorGridColor = [0.25 0.25 0.28];
+            this.input_analysis_graph = uiaxes(input_analysis_panel);
+            this.input_analysis_graph.BorderType = 'none';
+            this.input_analysis_graph.Position(4) = 250;
+            this.input_analysis_graph.Color = [0.18 0.18 0.21];
+            this.input_analysis_graph.XColor = [0.6 0.6 0.65];
+            this.input_analysis_graph.YColor = [0.6 0.6 0.65];
+            this.input_analysis_graph.GridColor = [0.3 0.3 0.35];
+            this.input_analysis_graph.MinorGridColor = [0.25 0.25 0.28];
         end
 
         function names_str = getPulseShapes(~)
@@ -177,9 +181,11 @@ classdef InputSec < handle
             if (~~isempty(text))
                 fprintf(2, "Error: Empty message string\n");
             else 
-                sys.input.readInput(text);
+                sys.ingest(text);
+                bin_stream = sys.input.stream;
                 if ~isempty(bin_stream)
                     this.updateDataLabels();
+                    plot(this.input_analysis_graph, sys.t_vec, sys.currentVals);
                 end
             end
         end
@@ -188,9 +194,9 @@ classdef InputSec < handle
             val = src.Value;
             switch val
                 case "Raw"
-                    sys.input.mode = InputMode.TEXT_RAW;
+                    sys.input.switchToRaw();
                 case "Binary"
-                    sys.input.mode = InputMode.TEXT_BINARY;
+                    sys.input.switchToBinary();
             end
         end
 
