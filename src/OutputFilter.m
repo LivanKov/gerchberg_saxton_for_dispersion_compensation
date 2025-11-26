@@ -43,7 +43,6 @@ classdef OutputFilter < handle
         end
 
         function y =  apply(this, input)
-        
         end
     end
 end
