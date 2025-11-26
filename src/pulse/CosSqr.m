@@ -1,12 +1,11 @@
-function y = CosSqr(x, a, mid, width, toPlot)
+function y = CosSqr(x, a, width, toPlot)
 arguments
     x double
     a double = 1
-    mid (1,1) double = 0
     width (1,1) double = 1
     toPlot string = 'false'
 end
-    y = RectPulse(x, a, mid, width, 'f');
+    y = RectPulse(x, a, width, 'f');
     cossqr = a * cos(pi*x/width).^2;
 
     y = y .* cossqr;

@@ -123,12 +123,12 @@ classdef InputSec < handle
             bg.ForegroundColor = [0.85 0.85 0.85];
             
             opt_1 = uiradiobutton(bg,"Text","Enter message", ...
-                "Position",[10 50 100 22]);
+                "Position",[5 50 100 22]);
             opt_1.Tag = 'msg';
             opt_1.FontColor = [0.85 0.85 0.85];
             
             opt_2 = uiradiobutton(bg,"Text","Upload file", ...
-                "Position",[10 28 100 22]);
+                "Position",[5 28 100 22]);
             opt_2.Tag = 'file';
             opt_2.FontColor = [0.85 0.85 0.85];
             
@@ -137,14 +137,14 @@ classdef InputSec < handle
             opt_2.FontSize = 10;
         
             this.mode_label = uilabel(input_mode_panel);
-            this.mode_label.Text = "Mode: ";
-            this.mode_label.Position(1:3) = [15 25 50];
+            this.mode_label.Text = " ";
+            this.mode_label.Position(1:3) = [8 25 80];
             this.mode_label.FontSize = 10;
             this.mode_label.FontColor = [0.75 0.75 0.78];
         
             this.size_label = uilabel(input_mode_panel);
-            this.size_label.Text = "Size: ";
-            this.size_label.Position(1:3) = [15 5 50];
+            this.size_label.Position(1:3) = [8 5 80];
+            this.size_label.Text = " ";
             this.size_label.FontSize = 10;
             this.size_label.FontColor = [0.75 0.75 0.78];
         
@@ -234,8 +234,8 @@ classdef InputSec < handle
         end
 
         function updateDataLabels(this)
-            this.size_label.Text = "Check";
-            this.mode_label.Text = "Check 2";
+            this.size_label.Text = this.system.input.size(1) + " Bits, " + this.system.input.size(2) + " Bytes";
+            this.mode_label.Text = string(this.system.input.mode);
         end
 
         function refreshInputPlot(this)
