@@ -7,7 +7,7 @@ classdef InputSec < handle
         input_analysis_graph % Access the input analysis graph
     end
 
-    methods
+    methods(Access = private)
         function this = InputSec(panel, s)
             this.parent = panel;
             this.system = s;
@@ -185,14 +185,14 @@ classdef InputSec < handle
                 bin_stream = sys.input.stream;
                 if ~isempty(bin_stream)
                     this.updateDataLabels();
-                    this.refreshInputPlot();
+                    this.r
                     plot(this.input_analysis_graph, sys.t_vec, sys.currentVals);
+                    this.input_analysis_graph.YLim = [min(sys.currentVals)*2 max(sys.currentVals)*2];
+                    this.input_analysis_graph.XLim = [System.START System.SAMPLING_INTERVAL * (length(bin_stream) - 1)];
                     disp(this.input_analysis_graph.XLim);
                     sys.shapeInput();
                     hold(this.input_analysis_graph, 'on');
                     plot(this.input_analysis_graph, sys.t_vec, sys.currentVals);
-                    this.input_analysis_graph.YLim = [min(sys.currentVals)*2 max(sys.currentVals)*2];
-                    this.input_analysis_graph.XLim = [System.START System.SAMPLING_INTERVAL * (length(bin_stream) - 1)];
                 end
             end
         end
