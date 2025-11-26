@@ -13,7 +13,7 @@ arguments
 end
     switch shape 
         case PulseShape.RECT
-            pulse = RectPulse(input, 1, 0 , 1, "false");
+            pulse = RectPulse(input, 1, 1, "false");
         case PulseShape.COS_SQR
             pulse = CosSqr(input, 1, 0, 1, "false");
         case PulseShape.RCOS
