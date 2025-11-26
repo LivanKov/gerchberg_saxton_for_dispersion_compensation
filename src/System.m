@@ -71,12 +71,16 @@ classdef System < handle
             this.currentVals = noisy_vals;
         end
 
-        function plot(this)
+        function plot(this, color)
+            if nargin == 1
+                color = 'y';
+            end
+
             if isempty(this.t_vec) || isempty(this.currentVals)
                 return
             end
 
-            plot(this.t_vec, this.currentVals, 'Color', 'y', 'LineWidth', 1.5);
+            plot(this.t_vec, this.currentVals, 'Color', color, 'LineWidth', 1.5);
             ylim([min(this.currentVals) * 2 max(this.currentVals)*2]);
             GlobalPlotSettings();
         end
