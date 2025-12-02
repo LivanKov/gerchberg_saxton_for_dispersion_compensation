@@ -12,6 +12,7 @@ classdef NoiseSec < handle
             n_i = uigridlayout(panel, [2 2]);
             n_i.BackgroundColor = [0.12 0.12 0.15];
             
+            
             x_noisy = -5:0.01:5;
             pulse_shape = s.inputFilter.pulseShape;
             y_noisy = GeneratePulse(x_noisy, pulse_shape);

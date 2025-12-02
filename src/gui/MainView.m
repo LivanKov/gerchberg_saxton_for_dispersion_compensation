@@ -18,7 +18,7 @@ classdef MainView < handle
             tabs = uitabgroup(g);
             in_sec = uitab(tabs,'Title','Input');
             n_sec = uitab(tabs,'Title','Noise');
-            uitab(tabs,'Title','Receiver');
+            rec_sec = uitab(tabs,'Title','Receiver');
             uitab(tabs,'Title','Output');
             uitab(tabs, 'Title', 'Statistic');
             
@@ -29,7 +29,9 @@ classdef MainView < handle
             NoiseSec(n_sec, s);
         
             % Receiver section
+            RecSec(rec_sec, s);
             
+
             % Output section
         end
     end

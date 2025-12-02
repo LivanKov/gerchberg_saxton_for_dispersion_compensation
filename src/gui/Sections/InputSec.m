@@ -23,7 +23,7 @@ classdef InputSec < handle
             g_i1.BackgroundColor = [0.15 0.15 0.18];
             g_i1.Padding(1) = 30;
             
-            x = -5:0.01:5;
+            x = -2:0.01:2;
             p_s = s.inputFilter.pulseShape;
             y = GeneratePulse(x, p_s);
             t_pulse = uiaxes(g_i1);
