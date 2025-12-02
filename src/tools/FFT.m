@@ -7,6 +7,15 @@ function [f, s] = FFT(t, x, toPlot)
         toPlot = false;
     end
 
+    % Compute FFT
+    Y = fft(pulse);
+    Y_shifted = fftshift(Y);
+    
+    % Frequency vector (for plotting)
+    N = length(t);
+    fs = 1/dt;
+    f = (-N/2:N/2-1) * (fs/N);
+
 
     if toPlot == 't' || toPlot == "true"
         plot(f, s, 'Color', 'y', 'LineWidth', 1.5);
