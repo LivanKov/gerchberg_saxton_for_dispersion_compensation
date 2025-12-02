@@ -41,7 +41,7 @@ xlabel('Time (t)'); ylabel('x(t)');
 
 
 f_pos_ids = f >= 0;
-abs_spec = abs(Y_shifted);
+abs_spec = abs(Y_continuous);
 f_pos = f(f_pos_ids);
 spec_pos = abs_spec(f_pos_ids);
 
@@ -59,6 +59,7 @@ X = ifft(Y);
 
 t = (0:length(X)- 1) * dt;
 plot(t, X);
+grid on;
 figure;
 
 % Noise panel 
@@ -79,8 +80,39 @@ plot(f, abs(Y_N_Continous));
 xlabel('Frequency (Hz)'); ylabel('|FFT|');
 title('Magnitude Spectrum (Noisy)');
 grid on;
-xlim([-20 20]);  % Zoom in to see sinc structure
+xlim([-20 20]);
 
 % 90% esd filter
 
+esd = abs(spec_pos) .^ 2;
+figure;
+subplot(4,1,1);
+plot(f_pos, esd);
+xlim([0 10]);
 
+int = cumtrapz(f_pos, esd);
+
+subplot(4,1,2);
+plot(f_pos, int);
+xlim([0 10]);
+total_energy = trapz(f_pos, esd);
+desired = total_energy * 0.9;
+[val, idx] = find(int > desired, 1);
+square_filt = zeros(1, length(f_pos));
+square_filt(1:idx - 1) = 1;
+subplot(4,1,3);
+plot(f_pos, square_filt);
+xlim([0 10]);
+
+square_filt_full = zeros(1, length(f));
+
+disp(size(f));
+disp(size(square_filt_full));
+
+square_filt_full(ceil(length(f)/2) - idx + 2: ceil(length(f)/2) + idx - 1) = 1;
+
+disp(size(square_filt_full));
+
+subplot(4, 1, 4);
+plot(f, square_filt_full);
+xlim([-10 10]);
