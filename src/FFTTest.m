@@ -77,7 +77,7 @@ subplot(4,1,2);
 plot(f_pos, int);
 xlim([0 10]);
 total_energy = trapz(f_pos, esd);
-desired = total_energy * 0.9;
+desired = total_energy * 0.99;
 [val, idx] = find(int > desired, 1);
 square_filt = zeros(1, length(f_pos));
 square_filt(1:idx - 1) = 1;
