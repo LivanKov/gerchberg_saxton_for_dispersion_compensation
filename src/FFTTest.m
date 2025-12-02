@@ -54,33 +54,14 @@ xlabel('Frequency (Hz)'); ylabel('|FFT|');
 
 % Inverse Fourier-Transform
 subplot(4,1,4);
-Y2 = [spec_pos(1) spec_pos(2:end)/2 fliplr(conj(spec_pos(2:end)))/2];
-X = ifft(Y);
+X_1 = ifftshift(Y_continuous/dt);
+X = ifft(X_1);
 
 t = (0:length(X)- 1) * dt;
 plot(t, X);
-grid on;
-figure;
-
-% Noise panel 
-pulse_noise = ApplyNoise(pulse, 1);
-subplot(4, 1, 1);
-plot(t, pulse_noise);
-title('Time Domain (Noisy)');
+title("Time Domain (Reconstructed via IFFT)");
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
-
-Y_N = fft(pulse_noise);
-Y_N_shifted = fftshift(Y_N);
-
-Y_N_Continous = Y_N_shifted * dt;
-
-subplot(4, 1, 2);
-plot(f, abs(Y_N_Continous));
-xlabel('Frequency (Hz)'); ylabel('|FFT|');
-title('Magnitude Spectrum (Noisy)');
-grid on;
-xlim([-20 20]);
 
 % 90% esd filter
 
@@ -106,13 +87,55 @@ xlim([0 10]);
 
 square_filt_full = zeros(1, length(f));
 
-disp(size(f));
-disp(size(square_filt_full));
-
 square_filt_full(ceil(length(f)/2) - idx + 2: ceil(length(f)/2) + idx - 1) = 1;
-
-disp(size(square_filt_full));
 
 subplot(4, 1, 4);
 plot(f, square_filt_full);
 xlim([-10 10]);
+
+
+figure;
+
+% Noise panel 
+pulse_noise = ApplyNoise(pulse, 1);
+subplot(4, 1, 1);
+plot(t, pulse_noise);
+title('Time Domain (Noisy)');
+xlabel('Time (t)'); ylabel('x(t)');
+grid on;
+
+Y_N = fft(pulse_noise);
+Y_N_shifted = fftshift(Y_N);
+
+Y_N_Continous = Y_N_shifted * dt;
+
+subplot(4, 1, 2);
+plot(f, abs(Y_N_Continous));
+xlabel('Frequency (Hz)'); ylabel('|FFT|');
+title('Magnitude Spectrum (Noisy)');
+grid on;
+xlim([-20 20]);
+
+disp(size(square_filt_full));
+disp(size(abs(Y_N_Continous)));
+
+filtered = square_filt_full .* Y_N_Continous;
+
+subplot(4, 1, 3);
+plot(f, abs(filtered));
+xlabel('Frequency (Hz)'); ylabel('|FFT|');
+title('Magnitude Spectrum (Filtered)');
+grid on;
+xlim([-20 20]);
+
+
+% Inverse Fourier Transform of the Filtered Magnitude spectrum
+subplot(4,1,4);
+X_1 = ifftshift(filtered/dt);
+X = ifft(X_1);
+
+t = (0:length(X)- 1) * dt;
+plot(t, X);
+title("Filtered Time Domain (Reconstructed via IFFT)");
+xlabel('Time (t)'); ylabel('x(t)');
+grid on;
