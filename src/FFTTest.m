@@ -135,7 +135,7 @@ X_1 = ifftshift(filtered/dt);
 X = ifft(X_1);
 
 t = (0:length(X)- 1) * dt;
-plot(t, X);
+plot(t, abs(X));
 title("Filtered Time Domain (Reconstructed via IFFT)");
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
