@@ -3,29 +3,19 @@ dt = System.SYMBOL_PRECISION;
 s = System;
 s.input.switchToBinary();
 s.ingest('1010101010100001');
+disp("Input Sequence");
+disp(s.input.stream);
 s.updatePulse(PulseShape.SINC);
 s.shapeInput;
 pulse = s.currentVals;
 t = s.t_vec;
+disp(length(s.t_vec));
+disp(length(s.currentVals));
 
-% Compute FFT
-Y = fft(pulse);
-Y_shifted = fftshift(Y);
+[f, spec] = FFT(pulse);
 
-% Frequency vector (for plotting)
-N = length(t);
-fs = 1/dt;
-f = (-N/2:N/2-1) * (fs/N);
-
-[~, idx_zero] = min(abs(f));
-f(idx_zero);
-
-% SCALE the FFT to match continuous Fourier transform
-Y_continuous = Y_shifted * dt;  % Multiply by dt!
-
-% Now plot
 subplot(4,1,1);
-plot(f, abs(Y_continuous));
+plot(f, abs(spec));
 xlabel('Frequency (Hz)'); ylabel('|FFT|');
 title('Magnitude Spectrum');
 grid on;
@@ -41,7 +31,7 @@ xlabel('Time (t)'); ylabel('x(t)');
 
 
 f_pos_ids = f >= 0;
-abs_spec = abs(Y_continuous);
+abs_spec = abs(spec);
 f_pos = f(f_pos_ids);
 spec_pos = abs_spec(f_pos_ids);
 
@@ -54,11 +44,10 @@ xlabel('Frequency (Hz)'); ylabel('|FFT|');
 
 % Inverse Fourier-Transform
 subplot(4,1,4);
-X_1 = ifftshift(Y_continuous/dt);
-X = ifft(X_1);
 
-t = (0:length(X)- 1) * dt;
-plot(t, X);
+[t_new, x_new] = IFFT(spec);
+
+plot(t_new, x_new);
 title("Time Domain (Reconstructed via IFFT)");
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
@@ -77,7 +66,7 @@ subplot(4,1,2);
 plot(f_pos, int);
 xlim([0 10]);
 total_energy = trapz(f_pos, esd);
-desired = total_energy * 0.99;
+desired = total_energy * 0.90;
 [val, idx] = find(int > desired, 1);
 square_filt = zeros(1, length(f_pos));
 square_filt(1:idx - 1) = 1;
