@@ -20,7 +20,6 @@ classdef OutputFilter < handle
             end
 
             centre_freq = min(abs(f));
-            centre_freq_id = find(f = centre_freq);
             esd = abs(input) .^ 2;
             total = trapz(f_vec, esd);
             desired = total * percentage / 100;

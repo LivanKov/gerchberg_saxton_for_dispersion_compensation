@@ -1,8 +1,12 @@
-t = -2:0.01:2;
-dt = 0.01;
+dt = System.SYMBOL_PRECISION;
 
-% Rectangular pulse (width T = 1, amplitude A = 1)
-pulse = double(abs(t) <= 0.5);
+s = System;
+s.input.switchToBinary();
+s.ingest('1010101010100001');
+s.updatePulse(PulseShape.SINC);
+s.shapeInput;
+pulse = s.currentVals;
+t = s.t_vec;
 
 % Compute FFT
 Y = fft(pulse);
@@ -20,10 +24,8 @@ f(idx_zero);
 Y_continuous = Y_shifted * dt;  % Multiply by dt!
 
 % Now plot
-plot(f, abs(Y_continuous));
-
 subplot(4,1,1);
-plot(f, abs(Y_shifted));
+plot(f, abs(Y_continuous));
 xlabel('Frequency (Hz)'); ylabel('|FFT|');
 title('Magnitude Spectrum');
 grid on;
@@ -55,6 +57,30 @@ subplot(4,1,4);
 Y2 = [spec_pos(1) spec_pos(2:end)/2 fliplr(conj(spec_pos(2:end)))/2];
 X = ifft(Y);
 
-t = (-(length(X)/2):length(X)/2 - 1) * dt;
+t = (0:length(X)- 1) * dt;
 plot(t, X);
+figure;
+
+% Noise panel 
+pulse_noise = ApplyNoise(pulse, 1);
+subplot(4, 1, 1);
+plot(t, pulse_noise);
+title('Time Domain (Noisy)');
+xlabel('Time (t)'); ylabel('x(t)');
 grid on;
+
+Y_N = fft(pulse_noise);
+Y_N_shifted = fftshift(Y_N);
+
+Y_N_Continous = Y_N_shifted * dt;
+
+subplot(4, 1, 2);
+plot(f, abs(Y_N_Continous));
+xlabel('Frequency (Hz)'); ylabel('|FFT|');
+title('Magnitude Spectrum (Noisy)');
+grid on;
+xlim([-20 20]);  % Zoom in to see sinc structure
+
+% 90% esd filter
+
+
