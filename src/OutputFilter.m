@@ -1,6 +1,5 @@
 classdef OutputFilter < handle
     properties
-        inputBandLimited 
         areaCovered
         lowPassFreq
         nyquistLimit
@@ -8,37 +7,29 @@ classdef OutputFilter < handle
 
     methods
         function outputFilterObj =  OutputFilter()
-            outputFilterObj.inputBandLimited = false; 
             outputFilterObj.nyquistLimit = false;
-            outputFilterObj.areaCovered = 99;
+            outputFilterObj.areaCovered = 95;
 
         end
 
         % returns a perfect lowpass, retaining 99% of the spectral energy
         % of the impulse
-        function out = construct(this, input, percentage)
+        function out = construct(this, f, input, percentage)
             if nargin == 3
                 this.areaCovered = percentage;
             end
 
-            if this.inputBandLimited
-                out = x ~= 0;
-            else 
-
-                A = trapz(input);
-                esd = abs(input) .^ 2;
-                int_esd = cumtrapz(esd);
-                area = int_esd <= percentage / 100;
-                n_z = nnz(~area);
-                shifted_area = zeros(size(area));
-                if n_z == 0
-                    printf("The provided spectral density does not contain %d power\n", percentage);
-                    out = ones(1,size(input));
-                    return;
-                end
-                len = length(shifted_area(uint32((n_z + 1)/2):end));
-                shifted_area(uint32((n_z + 1)/2):end) = area(1:len);
-                out = shifted_area;
+            centre_freq = min(abs(f));
+            centre_freq_id = find(f = centre_freq);
+            esd = abs(input) .^ 2;
+            total = trapz(f_vec, esd);
+            desired = total * percentage / 100;
+            ind = int_esd <= desired;
+            pos_filter = zeros(1, 5);
+            if n_z == 0
+                printf("The provided spectral density does not contain %d power\n", percentage);
+                out = ones(1,size(input));
+                return;
             end
         end
 
