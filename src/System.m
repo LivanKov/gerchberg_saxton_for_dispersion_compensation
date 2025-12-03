@@ -71,9 +71,7 @@ classdef System < handle
         end
 
         function sqr_filter =  applyOutputFilter(this)
-            this.outputFilter.areaCovered = 99;
             this.State = SystemState.INPUT_RECEIVED;
-
             sqr_filter = this.outputFilter.construct(this.f_vec, this.spectrum);
             %{
             filtered_spec = square_filter .* spec;
