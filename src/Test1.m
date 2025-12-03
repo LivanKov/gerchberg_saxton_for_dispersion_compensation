@@ -3,7 +3,7 @@ s.input.switchToBinary();
 s.ingest('1010101010100001');
 disp("Input Sequence");
 disp(s.input.stream);
-s.updatePulse(PulseShape.COS_SQR);
+s.updatePulse(PulseShape.SINC);
 s.shapeInput;
 pulse = s.currentVals;
 t = s.t_vec;
@@ -66,7 +66,7 @@ xlim([0 10]);
 
 
 
-s.outputFilter.areaCovered = 90;
+s.outputFilter.areaCovered = 99;
 square_filter = s.outputFilter.construct(f, spec);
 
 square_filter_2 = s.outputFilter.construct(f, spec);
@@ -83,7 +83,7 @@ xlim([-10 10]);
 figure;
 
 % Noise panel 
-s.addNoise(1);
+s.addNoise(4);
 pulse_noise = s.currentVals;
 subplot(4, 1, 1);
 plot(t, pulse_noise);
@@ -133,3 +133,4 @@ plot(f, square_filter_2);
 title('Square Filter 2');
 figure;
 s.plot();
+res = sampleOutput(t_new_alpha, x_new_alpha)

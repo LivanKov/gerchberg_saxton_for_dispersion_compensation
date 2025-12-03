@@ -124,6 +124,14 @@ classdef System < handle
             GlobalPlotSettings();
         
         end
+
+        function out = sampleOutput(this)
+            mods = mod(this.t_vec, System.SAMPLING_INTERVAL);
+            ids = mods == 0;
+            nums = this.currentVals(ids);
+            rounded = nums > 0.5;
+            out = num2str(rounded);
+        end
     end
 
     methods(Access = private)
