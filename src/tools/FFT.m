@@ -18,10 +18,6 @@ function [f, s] = FFT(x, toPlot)
     N = length(x);
     fs = 1/System.SYMBOL_PRECISION;
     f = (-N/2:N/2-1) * (fs/N);
-    
-    [~, idx_zero] = min(abs(f));
-    f(idx_zero);
-    
     s = Y_shifted * System.SYMBOL_PRECISION;
     
     if toPlot == 't' | toPlot == "true"

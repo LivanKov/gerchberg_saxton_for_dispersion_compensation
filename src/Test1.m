@@ -1,11 +1,9 @@
-dt = System.SYMBOL_PRECISION;
-
 s = System;
 s.input.switchToBinary();
 s.ingest('1010101010100001');
 disp("Input Sequence");
 disp(s.input.stream);
-s.updatePulse(PulseShape.SINC);
+s.updatePulse(PulseShape.COS_SQR);
 s.shapeInput;
 pulse = s.currentVals;
 t = s.t_vec;
@@ -65,50 +63,45 @@ int = cumtrapz(f_pos, esd);
 subplot(4,1,2);
 plot(f_pos, int);
 xlim([0 10]);
-total_energy = trapz(f_pos, esd);
-desired = total_energy * 0.90;
-[val, idx] = find(int > desired, 1);
-square_filt = zeros(1, length(f_pos));
-square_filt(1:idx - 1) = 1;
-subplot(4,1,3);
-plot(f_pos, square_filt);
-xlim([0 10]);
 
-square_filt_full = zeros(1, length(f));
 
-square_filt_full(ceil(length(f)/2) - idx + 2: ceil(length(f)/2) + idx - 1) = 1;
+
+s.outputFilter.areaCovered = 90;
+square_filter = s.outputFilter.construct(f, spec);
+
+square_filter_2 = s.outputFilter.construct(f, spec);
+
+subplot(4, 1, 3);
+plot(f_pos, square_filter(f_pos_ids));
+xlim([0 20]);
 
 subplot(4, 1, 4);
-plot(f, square_filt_full);
+plot(f, square_filter);
 xlim([-10 10]);
 
 
 figure;
 
 % Noise panel 
-pulse_noise = ApplyNoise(pulse, 1);
+s.addNoise(1);
+pulse_noise = s.currentVals;
 subplot(4, 1, 1);
 plot(t, pulse_noise);
 title('Time Domain (Noisy)');
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
 
-Y_N = fft(pulse_noise);
-Y_N_shifted = fftshift(Y_N);
-
-Y_N_Continous = Y_N_shifted * dt;
+[f_noisy_new, spec_noisy_new] = FFT(pulse_noise);
 
 subplot(4, 1, 2);
-plot(f, abs(Y_N_Continous));
+plot(f_noisy_new, abs(spec_noisy_new));
 xlabel('Frequency (Hz)'); ylabel('|FFT|');
 title('Magnitude Spectrum (Noisy)');
 grid on;
 xlim([-20 20]);
 
-disp(size(square_filt_full));
-disp(size(abs(Y_N_Continous)));
-
-filtered = square_filt_full .* Y_N_Continous;
+filtered = square_filter .* spec_noisy_new;
+custom_filt = s.applyOutputFilter();
 
 subplot(4, 1, 3);
 plot(f, abs(filtered));
@@ -120,11 +113,23 @@ xlim([-20 20]);
 
 % Inverse Fourier Transform of the Filtered Magnitude spectrum
 subplot(4,1,4);
-X_1 = ifftshift(filtered/dt);
-X = ifft(X_1);
-
-t = (0:length(X)- 1) * dt;
-plot(t, abs(X));
+[t_new_alpha, x_new_alpha] = IFFT(filtered);
+plot(t_new_alpha, abs(x_new_alpha));
 title("Filtered Time Domain (Reconstructed via IFFT)");
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
+
+figure;
+plot(f, custom_filt);
+title('Custom Filter');
+xlim([-20 20]);
+
+figure;
+plot(f, square_filter);
+title('Square Filter');
+
+figure;
+plot(f, square_filter_2);
+title('Square Filter 2');
+figure;
+s.plot();

@@ -1,0 +1,2 @@
+classdef Receiver < handle
+end

@@ -1,4 +1,4 @@
-function [t_new, pulse_new, info] = kek(t, pulse, percentage)
+function [t_new, pulse_new, info] = construct_percentage_pulse(t, pulse, percentage)
 
 % CONSTRUCT_PERCENTAGE_PULSE - Constructs a pulse containing a specified
 % percentage of the area of the input pulse by finding symmetric bounds

@@ -16,12 +16,14 @@
 classdef System < handle
     properties
         inputFilter InputFilter
-        OutputFilter OutputFilter
+        outputFilter OutputFilter
         input
         Output
         State SystemState
         currentVals; % current values output by the filter etc.
         t_vec
+        f_vec
+        spectrum
     end
 
     properties(Constant)
@@ -41,6 +43,8 @@ classdef System < handle
             sysObj.State = SystemState.START;
             i_f = InputFilter;
             sysObj.inputFilter = i_f;
+            o_f = OutputFilter;
+            sysObj.outputFilter = o_f;
         end
 
         function updatePulse(this, pulse)
@@ -63,6 +67,25 @@ classdef System < handle
             this.State = SystemState.PULSE_SHAPED;
             out = this.inputFilter.passThrough(this.currentVals);
             this.currentVals = out;
+            this.buildSpectrum();
+        end
+
+        function sqr_filter =  applyOutputFilter(this)
+            this.outputFilter.areaCovered = 99;
+            this.State = SystemState.INPUT_RECEIVED;
+
+            sqr_filter = this.outputFilter.construct(this.f_vec, this.spectrum);
+            %{
+            filtered_spec = square_filter .* spec;
+            [~, x] = IFFT(filtered_spec);
+            this.currentVals = abs(x);
+            %}
+        end
+
+        function buildSpectrum(this)
+            [f, spec] = FFT(this.currentVals);
+            this.f_vec = f;
+            this.spectrum = spec;
         end
 
         function addNoise(this, a)
@@ -79,10 +102,27 @@ classdef System < handle
             if isempty(this.t_vec) || isempty(this.currentVals)
                 return
             end
-
+            figure;
             plot(this.t_vec, this.currentVals, 'Color', color, 'LineWidth', 1.5);
             ylim([min(this.currentVals) * 2 max(this.currentVals)*2]);
             GlobalPlotSettings();
+        end
+
+        function plotFT(this, color)
+            if nargin == 1
+                color = 'y';
+            end
+
+            if isempty(this.t_vec) || isempty(this.currentVals)
+                return
+            end
+            figure;
+            [f, spec] = FFT(this.currentVals);
+            plot(f, abs(spec), 'Color', color, 'LineWidth', 1.5);
+            ylim([min(this.currentVals) * 2 max(this.currentVals)*2]);
+            xlim([-20 20]);
+            GlobalPlotSettings();
+        
         end
     end
 
