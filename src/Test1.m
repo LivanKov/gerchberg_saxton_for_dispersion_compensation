@@ -71,8 +71,6 @@ square_filter = s.outputFilter.construct(f, spec);
 
 square_filter_2 = s.outputFilter.construct(f, spec);
 
-custom_filt = s.applyOutputFilter();
-
 subplot(4, 1, 3);
 plot(f_pos, square_filter(f_pos_ids));
 xlim([0 20]);
@@ -103,6 +101,7 @@ grid on;
 xlim([-20 20]);
 
 filtered = square_filter .* spec_noisy_new;
+custom_filt = s.applyOutputFilter();
 
 subplot(4, 1, 3);
 plot(f, abs(filtered));

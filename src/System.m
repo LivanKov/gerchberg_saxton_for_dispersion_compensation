@@ -73,11 +73,10 @@ classdef System < handle
         function sqr_filter =  applyOutputFilter(this)
             this.State = SystemState.INPUT_RECEIVED;
             sqr_filter = this.outputFilter.construct(this.f_vec, this.spectrum);
-            %{
-            filtered_spec = square_filter .* spec;
+            
+            filtered_spec = sqr_filter .* this.spectrum;
             [~, x] = IFFT(filtered_spec);
             this.currentVals = abs(x);
-            %}
         end
 
         function buildSpectrum(this)

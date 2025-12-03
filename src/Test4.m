@@ -1,32 +1,23 @@
 s = System;
 s.input.switchToBinary();
 s.ingest('1010101010100001');
-s.updatePulse(PulseShape.COS_SQR);
-s.outputFilter.areaCovered = 90;
-
-% s.plot();
+s.updatePulse(PulseShape.SINC);
+s.outputFilter.areaCovered = 99;
 
 s.shapeInput();
 
-
-% s.plot();
-
-% s.plotFT();
-
-s.addNoise(0.5);
-
-% s.plot();
-
-% s.plotFT();
+s.plot();
 
 
+s.addNoise(10);
+
+s.plot();
 
 filter = s.applyOutputFilter();
 
+s.plot();
+
 figure;
-subplot(3, 1, 1);
-plot(f, filter);
-subplot(3, 1, 3);
-plot(f, abs(spec));
+plot(s.f_vec, filter);
 
 
