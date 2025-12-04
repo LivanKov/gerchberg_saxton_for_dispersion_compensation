@@ -3,7 +3,7 @@ s.input.switchToBinary();
 s.ingest('1010101010100001');
 disp("Input Sequence");
 disp(s.input.stream);
-s.updatePulse(PulseShape.COS_SQR);
+s.updatePulse(PulseShape.SINC);
 s.shapeInput;
 pulse = s.currentVals;
 t = s.t_vec;
@@ -83,7 +83,8 @@ xlim([-10 10]);
 figure;
 
 % Noise panel 
-s.addNoise(1);
+s.addNoise(100);
+% Durch das hinzufügen des Rauschens verändert sich der Filter -> darf
 pulse_noise = s.currentVals;
 subplot(4, 1, 1);
 plot(t, pulse_noise);
@@ -118,7 +119,7 @@ plot(t_new_alpha, abs(x_new_alpha));
 title("Filtered Time Domain (Reconstructed via IFFT)");
 xlabel('Time (t)'); ylabel('x(t)');
 grid on;
-
+%{
 figure;
 plot(f, custom_filt);
 title('Custom Filter');
@@ -135,5 +136,12 @@ title('Square Filter 2');
 xlim([-20 20]);
 figure;
 s.plot();
+%}
+res = sampleOutput(t_new_alpha, x_new_alpha);
 
-res = sampleOutput(t_new_alpha, x_new_alpha)
+
+% Faltung vom Rauschen und Filter berechnen
+% Falls die Leistung sehr klein im vergleich zu der Faltung vom Nutzsignal
+% von dem Nutzsignal und dem Filter -> richtig
+% Oversampling factor charakterisiert das Nachrichtensystem
+
